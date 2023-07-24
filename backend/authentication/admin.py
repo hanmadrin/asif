@@ -9,3 +9,5 @@ admin.site.register(models.Shop)
 admin.site.register(models.Transportation)
 admin.site.register(models.Rescue)
 admin.site.register(models.Adoption)
+admin.site.register(models.Blog)
+

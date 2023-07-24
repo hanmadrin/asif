@@ -106,9 +106,8 @@ class Blog(models.Model):
     content = models.TextField(blank=True,null=True)
     image = models.ImageField(upload_to='rescues/', blank=True, null=True)
 
-
     def __str__(self):
-        return self.name
+        return self.topic
     
 class Adoption(models.Model):
     user_id=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)

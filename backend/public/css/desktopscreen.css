@@ -237,13 +237,53 @@ body{
 #portfolioholder .title{
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
     text-transform: uppercase;
+    
+    
+    text-align: left;
+}
+#portfolioholder .titleHolder{
+    padding-top:120px;
+    padding-bottom:50px;
+    display:flex;
+    justify-content: left;
     letter-spacing: 0.15em;
     font-weight: 700;
     font-size: 22px;
     line-height: 1.75;
-    padding-top:120px;
-    padding-bottom:50px;
-    text-align: left;
+    
+}
+#portfolioholder .titleHolder .add{
+    height: 40px;
+    border-radius: 10px;
+    box-shadow: inset 0 0px 0 1px var(--primaryColor); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.5s;
+    margin-left: 20px;
+    padding: 0 10px;
+}
+#portfolioholder .titleHolder i,#portfolioholder .titleHolder span{
+    color: var(--primaryColor);
+    transition: all 0.5s;
+    font-size: 20px;
+    line-height: 1;
+}
+#portfolioHolder .newPostForm{
+    box-shadow: 1px solid #ccc;
+    border-radius: 10px;
+    width: 350px;
+    padding: 20px;
+}
+#portfolioholder .titleHolder .add:hover{
+    background-color: white;
+    color: var(--primaryColor);
+    background-color: var(--primaryColor);
+    
+}
+#portfolioholder .titleHolder .add:hover i, #portfolioholder .titleHolder .add:hover span{
+    color: white;
 }
 #portfolioholder{
     width:900px;
@@ -266,13 +306,90 @@ body{
     border-radius: 15px;
     display: flex;
     flex-direction: column;
-
+    position: relative;
 }
 #portfolios .portfolio .image{
     height: 180px;
     width: 100%;
     border-radius: 15px 15px 0 0;
     background-color: grey;
+    position: relative;
+}
+#portfolios .portfolio .image .edit{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: var(--primaryColor);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+#portfolios .portfolio .image .edit:hover{
+    background-color: white;
+    box-shadow: inset 0 0px 0 1px var(--primaryColor); 
+}
+#portfolios .portfolio .image .edit:hover i{
+    color: var(--primaryColor);
+}
+#portfolios .portfolio .image .edit i{
+    color: white;
+    transition: all 0.5s;
+}
+
+#portfolios .portfolio .cancel{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: var(--primaryColor);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+#portfolios .portfolio .cancel:hover{
+    background-color: white;
+    box-shadow: inset 0 0px 0 1px var(--primaryColor); 
+}
+#portfolios .portfolio .cancel:hover i{
+    color: var(--primaryColor);
+}
+#portfolios .portfolio .cancel i{
+    color: white;
+    transition: all 0.5s;
+}
+#portfolios .portfolio .delete{
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: var(--primaryColor);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+#portfolios .portfolio .delete:hover{
+    background-color: white;
+    box-shadow: inset 0 0px 0 1px var(--primaryColor); 
+}
+#portfolios .portfolio .delete:hover i{
+    color: var(--primaryColor);
+}
+#portfolios .portfolio .delete i{
+    color: white;
+    transition: all 0.5s;
 }
 #portfolios .portfolio .content{
     width: 100%;
@@ -526,4 +643,60 @@ body{
 #notify.danger{background-color: rgb(228, 26, 26);}
 #notify.warning{background-color: rgb(228, 228, 26);}
 #notify.info{background-color: rgb(26, 26, 228);}
+
+
+
+.editForm .title{
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.75;
+    padding-top:20px;
+    padding-bottom:18px;
+    text-align: center;
+}
+.editForm .editHolder{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+}
+.editForm label{
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.75;
+    text-align: left;
+}
+.editForm input{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    outline: none;
+    font-size: 16px;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    height: 30px;
+}
+.editForm input[type="submit"]{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    outline: none;
+    font-size: 16px;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    height: 50px;
+    background-color: var(--primaryColor);
+    color: white;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+.editForm input[type="submit"]:hover{
+    background-color: white;
+    color: var(--primaryColor);
+    box-shadow: inset 0 0px 0 1px var(--primaryColor); 
+}
 

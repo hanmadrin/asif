@@ -144,12 +144,74 @@ const globals = {
             logggedIn: false,
             loggedOut: true,
         }
-    ]
+    ],
+    postModels:{
+        adoptions: {
+            inputs:[
+                {
+                    name: 'name',
+                    type: 'text',
+                    text: 'Name',
+                },
+                {
+                    name: 'phone',
+                    type: 'text',
+                    text: 'Phone',
+                },
+                {
+                    name: 'email',
+                    type: 'text',
+                    text: 'Email',
+                },
+                {
+                    name: 'description',
+                    type: 'text',
+                    text: 'Description',
+                },
+                {
+                    name: 'image',
+                    type: 'file',
+                    text: 'Image',
+                }
+            ]
+        },
+        rescues: {
+            inputs:[
+                {
+                    name: 'name',
+                    type: 'text',
+                    text: 'Name',
+                },
+                {
+                    name: 'phone',
+                    type: 'text',
+                    text: 'Phone',
+                },
+                {
+                    map: 'map',
+                    type: 'text',
+                    text: 'Map',
+                },
+                {
+                    name: 'image',
+                    type: 'file',
+                    text: 'Image',
+                }
+            ]
+        },
+    }
 }
 const dataLoads = {
-    getData : async(path) => {
+    getData : async(path,token) => {
         console.log(path);
-        const response = await fetch(`./api/${path}/`);
+        const response = await fetch(`./api/${path}/`,{
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token,
+            },
+
+        });
         const data = await response.json();
         return data;
     },
@@ -186,7 +248,6 @@ const controllers = {
 };
 
 const components = {
-
     header: () => {
         const loggedIn = functions.isLoggedin();
         const header = document.createElement('div');
@@ -486,15 +547,96 @@ const components = {
         footer.innerText = '©Copyright | Pet Wellness Hub';
         return footer;
     },
-    portfolioCard: (item) => {
-        const porfolio = document.createElement('div');
-        porfolio.classList = 'portfolio';
+    portfolioManipulation: (item,model) => {
+        const portfolio = document.createElement('div');
+        portfolio.classList = 'portfolio';
+        
+
+        const inputs = globals.postModels[model].inputs;
+        const formEdit = ()=>{
+            const form = document.createElement('form');
+            form.classList = 'editForm';
+            for(let i = 0; i<inputs.length; i++){
+                const inputHolder = document.createElement('div');
+                inputHolder.classList = 'editHolder';
+                const label = document.createElement('label');
+                label.innerText = inputs[i].text;
+                const input = document.createElement('input');
+                input.type = inputs[i].type;
+                input.placeholder = inputs[i].text;
+                input.name = inputs[i].name;
+                if(item){
+                    input.value = item[inputs[i].name];
+                }
+                inputHolder.append(label,input);
+                form.append(inputHolder);
+            }
+            return form;
+        };
+        
+        const form = formEdit();
+        const cancel = document.createElement('div');
+        cancel.classList = 'cancel';
+        const cancelIcon = document.createElement('i');
+        cancelIcon.classList = 'fa fa-times';
+        cancel.append(cancelIcon);
+        cancel.onclick = async()=>{
+            if(item){
+                // const portfolio = ;
+                portfolio.replaceWith(components.portfolioCard(item,model));
+            }else{
+                portfolio.remove();
+            }
+        };
+        portfolio.append(form,cancel);
+        return portfolio;
+    },
+    portfolioCard: (item,model) => {
+        let portfolio = document.createElement('div');
+        portfolio.classList = 'portfolio';
         const image = document.createElement('div');
         image.classList = 'image';
         image.style.backgroundImage = `url('${item.image}')`;
         image.style.backgroundSize = 'cover';
         image.style.backgroundPosition = 'center';
-        
+        if(item.editable){
+            console.log('editable')
+            const edit = document.createElement('div');
+            edit.classList = 'edit';
+            const editIcon = document.createElement('i');
+            editIcon.classList = 'fa fa-edit';
+            edit.append(editIcon);
+            edit.onclick = ()=>{
+                //  portfolio = ;
+                const newPortfolio = components.portfolioManipulation(item,model);
+                portfolio.replaceWith(newPortfolio);
+            };
+            
+
+            const deletetion = document.createElement('div');
+            deletetion.classList = 'delete';
+            const deletetionIcon = document.createElement('i');
+            deletetionIcon.classList = 'fa fa-trash';
+            deletetion.append(deletetionIcon);
+            deletetion.onclick = async()=>{
+                const token = localStorage.getItem('token');
+                const response = await fetch(`./api/${model}/${item.id}/`,{
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Token ${token}`,
+                    },
+                });
+                if(response.status==200 || response.status==204){
+                    controllers.notify('success','Deleted Successfully');
+                    porfolio.remove();
+                }else{
+                    const result = await response.json();
+                    controllers.notify('danger',result.message||result.details||'Something went wrong');
+                }
+            };
+            image.append(edit,deletetion);
+        }
         const content = document.createElement('div');
         content.classList = 'content';
         const contact = document.createElement('div');
@@ -517,20 +659,20 @@ const components = {
             email.append(emailIcon);
             contact.append(email);
         }
-        if(item.user_id){
-            const user = document.createElement('div');
-            user.classList = 'item';
-            const userIcon = document.createElement('a');
-            userIcon.href = `/user/${item.user_id}`;
-            userIcon.classList = 'fa fa-user';
-            user.onclick = async(e)=>{
-                e.preventDefault();
-                window.history.pushState({},'',userIcon.href);
-                await view();
-            };
-            user.append(userIcon);
-            contact.append(user);
-        }
+        // if(item.user_id){
+        //     const user = document.createElement('div');
+        //     user.classList = 'item';
+        //     const userIcon = document.createElement('a');
+        //     userIcon.href = `/user/${item.user_id}`;
+        //     userIcon.classList = 'fa fa-user';
+        //     user.onclick = async(e)=>{
+        //         e.preventDefault();
+        //         window.history.pushState({},'',userIcon.href);
+        //         await view();
+        //     };
+        //     user.append(userIcon);
+        //     contact.append(user);
+        // }
         if(item.website){
             const website = document.createElement('div');
             website.classList = 'item';
@@ -624,25 +766,53 @@ const components = {
         }
         content.append(body);
 
-        porfolio.append(image,content);
-        return porfolio;
+        portfolio.append(image,content);
+        return portfolio;
     },
-    portfolioCards: async(path) => {
-        const items = await dataLoads.getData(path);
+    portfolioCards: async(path,token,model) => {
+        const items = await dataLoads.getData(path,token);
         const portfolioholder = document.createElement('div');
         portfolioholder.id = 'portfolioholder';
         const portfolios = document.createElement('div');
         portfolios.id = 'portfolios';
+        const titleHolder = document.createElement('div');
+        titleHolder.classList = 'titleHolder';
         const title = document.createElement('div');
         title.classList = 'title';
         title.innerText = path;
+        titleHolder.append(title);
+        const newPostForm = document.createElement('div');
+        newPostForm.classList = 'newPostForm';
+        if(token){
+            const add = document.createElement('div');
+            add.classList = 'add';
+            const addIcon = document.createElement('i');
+            // not fa fa-plus
+            addIcon.classList = 'fa fa-plus';
+            // addIcon.onclick = async()=>{
+                
+            // };
+            const addText = document.createElement('span');
+            addText.innerText = 'New';
+            add.append(addText,addIcon);
+            add.onclick = async()=>{
+                const portfolio = components.portfolioManipulation(null,model);
+                portfolios.prepend(portfolio);
+                // add.style.display = 'none';
+            };
+            titleHolder.append(add);
+            // const testItem = components.porfolioManipulation(items[0],model);
+            // portfolios.append(testItem);
+        }
+        
         for(let i=0;i<items.length;i++){
-            const portfolio = components.portfolioCard(items[i],i);
+            const portfolio = components.portfolioCard(items[i],model);
             portfolios.append(portfolio);
         }
-        portfolioholder.append(title,portfolios);
+        portfolioholder.append(titleHolder,newPostForm,portfolios);
         return portfolioholder;
-    }
+    },
+    
 };
 
 const pages = {
@@ -698,17 +868,33 @@ const pages = {
         document.body.replaceChildren(header,cards,footer);
     },
     adoption: async() => {
-        const header = components.header();
-        const vail = components.vail();
-        const footer = components.footer();
-        document.body.replaceChildren(header,footer);
+        if(!functions.isLoggedin()){
+            window.history.pushState({},'',`/`);
+            await view();
+            return;
+        }else{
+            const header = components.header();
+            const vail = components.vail();
+            const token = localStorage.getItem('token');
+            const cards = await components.portfolioCards('adoptions',`Token ${token}`,'adoptions');
+            const footer = components.footer();
+            document.body.replaceChildren(header,footer);
+        }
+        
     },
     rescue: async() => {
-        const header = components.header();
-        const vail = components.vail();
-        const cards = await components.portfolioCards('rescues');
-        const footer = components.footer();
-        document.body.replaceChildren(header,cards,footer);
+        if(!functions.isLoggedin()){
+            window.history.pushState({},'',`/`);
+            await view();
+            return;
+        }else{
+            const header = components.header();
+            const vail = components.vail();
+            const token = localStorage.getItem('token');
+            const cards = await components.portfolioCards('rescues',`Token ${token}`, 'rescues');
+            const footer = components.footer();
+            document.body.replaceChildren(header,cards,footer);
+        }
     },
     notFound: async() => {
         const header = components.header();

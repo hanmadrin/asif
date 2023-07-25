@@ -78,34 +78,36 @@ class userSignupView(generics.GenericAPIView):
             image = request.FILES.get('image', None)
 
             user=User.objects.create(email=email,name=name,phone=phone,image=image)
+            # print (request.data)
             user.set_password(password)
             user.save()
             # mail start
-            user_data = User.objects.get(email=email)
+            # user_data = User.objects.get(email=email)
 
-            token = encode({'id': user_data.id},
-                        settings.SECRET_KEY, algorithm='HS256')
-            current_site = get_current_site(request).domain
-            relative_link = reverse('email-verify')
-            absurl = 'http://' + current_site + \
-                relative_link + "?token=" + str(token)
-            html_message = render_to_string('welcome-message.html', {
-                'fullname': user_data.name,
-                'confirmationUrl': absurl
-            })
-            plain_message = strip_tags(html_message)
-            send_mail(
-                "Email Confirmation for Pet Care Project",
-                plain_message,
-                utils.EMAIL_ADDRESS,
-                [user_data.email],
-                html_message=html_message
-            )
+            # token = encode({'id': user_data.id},
+            #             settings.SECRET_KEY, algorithm='HS256')
+            # current_site = get_current_site(request).domain
+            # relative_link = reverse('email-verify')
+            # absurl = 'http://' + current_site + \
+            #     relative_link + "?token=" + str(token)
+            # html_message = render_to_string('welcome-message.html', {
+            #     'fullname': user_data.name,
+            #     'confirmationUrl': absurl
+            # })
+            # plain_message = strip_tags(html_message)
+            # send_mail(
+            #     "Email Confirmation for Pet Care Project",
+            #     plain_message,
+            #     utils.EMAIL_ADDRESS,
+            #     [user_data.email],
+            #     html_message=html_message
+            # )
 
             # mail stop
 
             return Response({"message": "Account created successfully"},status=status.HTTP_200_OK)
         except Exception as e:
+            # print (e)
             return Response({'message': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 

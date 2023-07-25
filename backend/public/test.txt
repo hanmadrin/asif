@@ -1,0 +1,182 @@
+// get all docotrs
+// GET: ./api/doctors
+// response
+[
+    {
+        id: 1,
+        name: "Dr. John Doe",
+        email: "",
+        phone: "",
+        specialty: "Dentist",
+        location: "123 Main St, Anytown, USA",
+        hospital: "St. Mary's Hospital",
+        image: "./public/images/service1.jpg",
+    }
+]
+
+// get all boarding
+// GET: ./api/boardings
+// response
+[
+    {
+        id: 1,
+        name: "Dr. John Doe",
+        email: "",
+        phone: "",
+        image: "./public/images/service1.jpg",
+    }
+]
+
+// get all shop
+// GET: ./api/shops
+// response
+[
+    {
+        id: 1,
+        name: "Dr. John Doe",
+        email: "",
+        phone: "",
+        website: "",
+        image: "./public/images/service1.jpg",
+        price: "5.00",
+        company: "Purina Ltd.",
+    }
+]
+
+// get all transportation
+// GET: ./api/transportations
+// response
+[
+    {
+        id: 1,
+        name: "Dr. John Doe",
+        email: "",
+        phone: "",
+        image: "./public/images/service1.jpg",
+        service: 'Taxi',
+        location: '123 Main St, Anytown, USA',
+    }
+]
+
+// get all rescues
+// GET: ./api/rescues
+// response
+[
+    {
+        id: 1,
+        editable: false,//true || false
+        name: "Dr. John Doe",
+        phone: "",
+        image: "./public/images/service1.jpg",
+        map: '123 Main St, Anytown, USA',
+        user_id: 1,
+    }
+]
+
+// edit rescue
+// PUT: ./api/rescues/:id
+// request body
+{
+    "id": 1,
+    "name": "Dr. John Doe",
+    "phone": "",
+    "image": imagefile,//if no image file given then image stays same
+    "map": '123 Main St, Anytown, USA',
+}
+
+// delete rescue
+// DELETE: ./api/rescues/:id
+{
+    "id": 1
+}
+
+// get all adoption
+// GET: ./api/adoptions
+// response
+[
+    {
+        id: 1,
+        editable: false,//true || false
+        phone: "",
+        image: "./public/images/service1.jpg",
+        user_id: 1,
+        email: "",
+        description: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
+    }
+]
+
+// edit adoption
+// PUT: ./api/adoptions/:id
+// request body
+{
+    "id": 1,
+    "phone": "",
+    "image": imagefile,//if no image file given then image stays same
+    "email": "",
+    "description": "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
+}
+
+// delete adoption
+// DELETE: ./api/adoptions/:id
+{
+    "id": 1
+}
+
+// get all blogs
+// GET: ./api/blogs
+// response
+// NOTE: only id and topic
+[
+    {
+        id: 1,
+        topic: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
+    }
+]
+
+// get blog by id
+// GET: ./api/blogs/:id
+// response
+{
+    id: 1,
+    topic: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
+    content: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
+    image: "./public/images/service1.jpg",
+}
+
+
+// singin
+// POST: ./api/signin
+// request body
+{
+    "email": "",
+    "password": "",
+}
+// response
+//need a session token user
+
+// signup
+// POST: ./api/signup
+// request body
+{
+    "email": "",
+    "password": "",
+    "phone": "",
+    "name": "",
+    "image": imagefile,//if no image file given then image stays same
+}
+
+// get current user
+// GET: ./api/user
+{
+    "id": 1,
+    "email": "",
+    "phone": "",
+    "name": "",
+    "image": "./public/images/service1.jpg",
+}
+
+// logout
+// POST: ./api/logout
+// need sesssion token deleted
+
+

@@ -463,11 +463,11 @@ const components = {
             servicecard.append(servicecardText);
             services.append(servicecard);
             servicecard.onclick = async()=>{
-                // if(globals.services[i].loginRequired && functions.isLoggedin()){
-                //     console.log('login required')
-                //     controllers.notify('warning','Login Required');
-                //     return;
-                // }
+                if(globals.services[i].loginRequired && !functions.isLoggedin()){
+                    console.log('login required')
+                    controllers.notify('warning','Login Required');
+                    return;
+                }
                 // // url blank target
                 if(globals.services[i].target){
                     window.open(globals.services[i].url,globals.services[i].target);

@@ -109,8 +109,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 WEB_ROOT = os.path.join(BASE_DIR, 'public')
 WEB_URL = '/public/'
+
 INDEX_ROOT = os.path.join(BASE_DIR, 'public/index.html')
 INDEX_URL = '/'
+URL1 = '/login'
+URL2 = '/boarding'
+URL3 = '/rescue'
+URL4 = '/adoption'
+URL5 = '/blog'
+URL6 = '/doctors'
+URL7 = '/transportation'
+URL8 = '/shop'
+URL9 = '/profile'
 
 
 

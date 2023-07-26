@@ -196,7 +196,7 @@ const globals = {
                     name: 'image',
                     type: 'file',
                     text: 'Image',
-                }
+                },
             ]
         },
     }
@@ -328,6 +328,10 @@ const components = {
                                 localStorage.setItem('token',result.token);
                                 localStorage.setItem('user',JSON.stringify(result.user));
                                 window.history.pushState({},'',`/`);
+                                await view();
+                            }else if(state=='signup'){
+                                controllers.notify('success','Signed Up Successfully');
+                                window.history.pushState({},'',`/login`);
                                 await view();
                             }
                         }else{
@@ -562,12 +566,10 @@ const components = {
                 const label = document.createElement('label');
                 label.innerText = inputs[i].text;
                 const input = document.createElement('input');
+                input.value = item?item[inputs[i].name]:'';
                 input.type = inputs[i].type;
                 input.placeholder = inputs[i].text;
                 input.name = inputs[i].name;
-                if(item){
-                    input.value = item[inputs[i].name];
-                }
                 inputHolder.append(label,input);
                 form.append(inputHolder);
             }

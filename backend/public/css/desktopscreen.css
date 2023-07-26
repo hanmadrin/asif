@@ -653,15 +653,15 @@ body{
     font-weight: 700;
     font-size: 18px;
     line-height: 1.75;
-    padding-top:20px;
-    padding-bottom:18px;
+    padding-top:10px;
+    padding-bottom:10px;
     text-align: center;
 }
 .editForm .editHolder{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px;
+    padding: 5px;
 }
 .editForm label{
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
@@ -675,20 +675,20 @@ body{
 .editForm input{
     border: 1px solid #ccc;
     border-radius: 5px;
-    padding: 10px;
+    padding: 5px;
     outline: none;
-    font-size: 16px;
+    font-size: 13px;
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
-    height: 30px;
+    height: 20px;
 }
 .editForm input[type="submit"]{
     border: 1px solid #ccc;
     border-radius: 5px;
-    padding: 10px;
+    padding: 5px;
     outline: none;
-    font-size: 16px;
+    font-size: 14px;
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
-    height: 50px;
+    height: 30px;
     background-color: var(--primaryColor);
     color: white;
     cursor: pointer;

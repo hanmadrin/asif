@@ -39,7 +39,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     objects = CustomUserManager()
-    is_verified = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=True)
     name=models.CharField(max_length=100,null=False,blank=False)
     phone=models.CharField(max_length=100,null=False,blank=False)
     image=models.ImageField(upload_to='users/',blank=True,null=True)
@@ -117,4 +117,4 @@ class Adoption(models.Model):
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.user_id.name

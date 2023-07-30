@@ -49,7 +49,7 @@ class RescueSerializer(serializers.ModelSerializer):
 class BlogListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
-        fields = ['id', 'topic']
+        fields = ['id', 'topic','image']
 
 class BlogDetailSerializer(serializers.ModelSerializer):
     class Meta:

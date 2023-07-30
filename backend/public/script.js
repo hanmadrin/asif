@@ -149,11 +149,6 @@ const globals = {
         adoptions: {
             inputs:[
                 {
-                    name: 'name',
-                    type: 'text',
-                    text: 'Name',
-                },
-                {
                     name: 'phone',
                     type: 'text',
                     text: 'Phone',
@@ -188,7 +183,7 @@ const globals = {
                     text: 'Phone',
                 },
                 {
-                    map: 'map',
+                    name: 'map',
                     type: 'text',
                     text: 'Map',
                 },
@@ -214,6 +209,33 @@ const dataLoads = {
         });
         const data = await response.json();
         return data;
+    },
+    postData : async(data,path,token) => {
+        const response = await fetch(`./api/${path}/`,{
+            method: 'POST',
+            headers: {
+                'Authorization': token,
+            },
+            body: data,
+        });
+        return await response.json();
+    },
+    putData : async(data,path,token) => {
+        // get id from form data
+        const id = data.get('id');
+        // remove image if empty
+        // console.log(data.get('image'));
+        if(data.get('image').size == 0){
+            data.delete('image');
+        }
+        const response = await fetch(`./api/${path}/${id}/`,{
+            method: 'PUT',
+            headers: {
+                'Authorization': token,
+            },
+            body: data,
+        });
+        return await response.json();
     },
 };
 const functions = {
@@ -244,6 +266,43 @@ const controllers = {
                 notify.remove();
             }catch(e){}
         },3000);
+    },
+    blog: (post) => {
+        // blog popup
+        const blog = document.createElement('div');
+        blog.id = 'blog';
+        blog.onclick = (e) => {
+            // not close if click on blog
+            if(e.target.id == 'blog'){
+                document.body.style.overflow = 'auto';
+                blog.remove();
+            }
+        };
+        const content = document.createElement('div');
+        content.classList = 'content';
+        blog.append(content);
+        const blogImage = document.createElement('div');
+        blogImage.classList = 'image';
+        blogImage.style.backgroundImage = `url(${post.image})`;
+        const blogTitle = document.createElement('div');
+        blogTitle.classList = 'title';
+        blogTitle.innerText = post.topic;
+        const description = document.createElement('div');
+        description.classList = 'description';
+        description.innerText = post.content;
+        
+        const close = document.createElement('div');
+        close.classList = 'close';
+        const crossButton = components.crossButton({
+            size: 30
+        });
+        crossButton.onclick = () => {
+            document.body.style.overflow = 'auto';
+            blog.remove();
+        };
+        close.append(crossButton);
+        content.append(blogImage,blogTitle,description,close);
+        document.body.append(blog);
     },
 };
 
@@ -551,7 +610,7 @@ const components = {
         footer.innerText = '©Copyright | Pet Wellness Hub';
         return footer;
     },
-    portfolioManipulation: (item,model) => {
+    portfolioManipulation: (item,model,token) => {
         const portfolio = document.createElement('div');
         portfolio.classList = 'portfolio';
         
@@ -573,6 +632,34 @@ const components = {
                 inputHolder.append(label,input);
                 form.append(inputHolder);
             }
+            const submitHolder = document.createElement('div');
+            submitHolder.classList = 'editHolder';
+            const submit = document.createElement('input');
+            submit.value = 'Save';
+            submit.type = 'submit';
+            submit.onclick = async(e)=>{
+                e.preventDefault();
+                // formdata
+                const data = new FormData(form);
+                // add id to formdata
+
+                if(item){
+                    data.append('id',item.id);
+                    const response = await dataLoads.putData(data,model,token);
+                    response.editable = true;
+                    if(response){
+                        portfolio.replaceWith(components.portfolioCard(response,model,token));
+                    }
+                }else{
+                    const response = await dataLoads.postData(data,model,token);
+                    response.editable = true;
+                    if(response){
+                        portfolio.replaceWith(components.portfolioCard(response,model,token));
+                    }
+                }
+            };
+            submitHolder.append(submit);
+            form.append(submitHolder);
             return form;
         };
         
@@ -585,7 +672,7 @@ const components = {
         cancel.onclick = async()=>{
             if(item){
                 // const portfolio = ;
-                portfolio.replaceWith(components.portfolioCard(item,model));
+                portfolio.replaceWith(components.portfolioCard(item,model,token));
             }else{
                 portfolio.remove();
             }
@@ -593,12 +680,12 @@ const components = {
         portfolio.append(form,cancel);
         return portfolio;
     },
-    portfolioCard: (item,model) => {
+    portfolioCard: (item,model,token) => {
         let portfolio = document.createElement('div');
         portfolio.classList = 'portfolio';
         const image = document.createElement('div');
         image.classList = 'image';
-        image.style.backgroundImage = `url('${item.image}')`;
+        image.style.backgroundImage = `url('${item.image||item.Image}')`;
         image.style.backgroundSize = 'cover';
         image.style.backgroundPosition = 'center';
         if(item.editable){
@@ -610,7 +697,7 @@ const components = {
             edit.append(editIcon);
             edit.onclick = ()=>{
                 //  portfolio = ;
-                const newPortfolio = components.portfolioManipulation(item,model);
+                const newPortfolio = components.portfolioManipulation(item,model,token);
                 portfolio.replaceWith(newPortfolio);
             };
             
@@ -631,7 +718,7 @@ const components = {
                 });
                 if(response.status==200 || response.status==204){
                     controllers.notify('success','Deleted Successfully');
-                    porfolio.remove();
+                    portfolio.remove();
                 }else{
                     const result = await response.json();
                     controllers.notify('danger',result.message||result.details||'Something went wrong');
@@ -727,6 +814,12 @@ const components = {
                 service.innerText = item.service;
                 title.append(service);
             }
+            // if(item.topic){
+            //     const topic = document.createElement('div');
+            //     topic.classList = 'name';
+            //     topic.innerText = item.topic;
+            //     title.append(topic);
+            // }
             content.append(title);
         }
         const body = document.createElement('div');
@@ -755,7 +848,35 @@ const components = {
             company.innerText = item.company;
             body.append(company);
         }
+        if(item.topic){
+            const topic = document.createElement('div');
+            topic.classList = 'topic';
+            topic.innerText = item.topic;
+            body.append(topic);
 
+            const more = document.createElement('div');
+            more.classList = 'more';
+            more.innerText = 'View Post';
+            more.onclick = async()=>{
+                // push history
+                document.body.style.overflow = 'hidden';
+                const data = await dataLoads.getData(`${model}/${item.id}`,token);
+                controllers.blog(data);
+            };
+            content.append(more);
+        }
+        // if(item.content){
+        //     const content = document.createElement('div');
+        //     content.classList = 'multiline';
+        //     content.innerText = item.content;
+        //     const span = document.createElement('span');
+        //     span.classList = 'more';
+        //     span.innerText = 'View More';
+        //     content.append(span);
+        //     // multiple lines with more button if content is too long
+
+        //     body.append(content);
+        // }
 
         const infos = ['email','phone','website']
         for(let i = 0; i<infos.length; i++){
@@ -785,7 +906,7 @@ const components = {
         titleHolder.append(title);
         const newPostForm = document.createElement('div');
         newPostForm.classList = 'newPostForm';
-        if(token){
+        if(token && model){
             const add = document.createElement('div');
             add.classList = 'add';
             const addIcon = document.createElement('i');
@@ -798,7 +919,7 @@ const components = {
             addText.innerText = 'New';
             add.append(addText,addIcon);
             add.onclick = async()=>{
-                const portfolio = components.portfolioManipulation(null,model);
+                const portfolio = components.portfolioManipulation(null,model,token);
                 portfolios.prepend(portfolio);
                 // add.style.display = 'none';
             };
@@ -808,13 +929,75 @@ const components = {
         }
         
         for(let i=0;i<items.length;i++){
-            const portfolio = components.portfolioCard(items[i],model);
+            const portfolio = components.portfolioCard(items[i],model,token);
             portfolios.append(portfolio);
         }
         portfolioholder.append(titleHolder,newPostForm,portfolios);
         return portfolioholder;
     },
-    
+    crossButton: ({size=30,options={color:'white'}})=>{
+        const designCross = document.createElement('div');
+        const crossButton = document.createElement('div');
+        const designCrossFirst = document.createElement('div');
+        const designCrossSecond = document.createElement('div');
+        designCrossFirst.classList = 'first';
+        designCrossSecond.classList = 'second';
+        // designCrossFirst.style.backgroundColor = options.color;
+        // designCrossSecond.style.backgroundColor = options.color;
+        designCross.append(designCrossFirst, designCrossSecond);
+        designCross.classList = 'design-cross';
+        designCross.style.height = `${size}px`;
+        designCross.style.width = `${size}px`;
+        designCrossFirst.style.left = `${size/2-(size/100*5)}px`;
+        designCrossSecond.style.left = `${size/2-(size/100*5)}px`;
+        designCrossFirst.style.height = `${size}px`;
+        designCrossSecond.style.height = `${size}px`;
+        designCrossFirst.style.width = `${size/100*10}px`;
+        designCrossSecond.style.width = `${size/100*10}px`;
+        designCrossFirst.style.borderRadius = `${size/100*10}px`;
+        designCrossSecond.style.borderRadius = `${size/100*10}px`;
+        crossButton.classList = 'cross';
+        crossButton.style.height = `${size}px`;
+        crossButton.style.width = `${size}px`;
+        crossButton.append(designCross);
+        return crossButton;
+    },
+    profile: (user) => {
+        const profile = document.createElement('div');
+        profile.id = 'profile';
+        const content = document.createElement('div');
+        content.classList = 'content';
+        const imageHolder = document.createElement('div');
+        imageHolder.classList = 'imageHolder';
+
+        const image = document.createElement('div');
+        image.classList = 'image';
+        image.style.backgroundImage = `url(${user.image})`;
+        imageHolder.append(image);
+        content.append(imageHolder);
+
+        const infos = ['name','email','phone']
+        for(let i = 0; i<infos.length; i++){
+            if(user[infos[i]]){
+                const info = document.createElement('div');
+                info.classList = 'line';
+                info.innerText = `${infos[i].toUpperCase()} : ${user[infos[i]]}`;
+                content.append(info);
+            }
+        }
+        const logout = document.createElement('input');
+        logout.classList = 'logout';
+        logout.type = 'button';
+        logout.value = 'Logout';
+        logout.onclick = async()=>{
+            localStorage.removeItem('token');
+            window.history.pushState({},'', '/');
+            await view();
+        };
+        content.append(logout);
+        profile.append(content);
+        return profile;
+    }
 };
 
 const pages = {
@@ -880,7 +1063,7 @@ const pages = {
             const token = localStorage.getItem('token');
             const cards = await components.portfolioCards('adoptions',`Token ${token}`,'adoptions');
             const footer = components.footer();
-            document.body.replaceChildren(header,footer);
+            document.body.replaceChildren(header,cards,footer);
         }
         
     },
@@ -910,26 +1093,52 @@ const pages = {
         const footer = components.footer();
         document.body.replaceChildren(header,notFound,backToHome,footer);
     },
+    blog: async() => {
+        const header = components.header();
+        const vail = components.vail();
+        const cards = await components.portfolioCards('blogs',null,'blogs');
+        const footer = components.footer();
+        document.body.replaceChildren(header,cards,footer);
+    },
+    profile: async() => {
+        if(!functions.isLoggedin()){
+            window.history.pushState({},'',`/`);
+            await view();
+            return;
+        }else{
+            const header = components.header();
+            const vail = components.vail();
+            const token = localStorage.getItem('token');
+            const user = await dataLoads.getData('checkauth',`Token ${token}`);
+            const profile = components.profile(user);
+            const footer = components.footer();
+            document.body.replaceChildren(header,profile,footer);
+        }
+    },
 }
 const view = async() => {
     const url = new URL(window.location.href);
     const path = url.pathname;
     if(path=='/'){
         await pages.home();
-    }else if(path=='/doctors'){
+    }else if(path=='/doctors' || path=='/doctors/'){
         await pages.doctors();
-    }else if(path=='/login'){
+    }else if(path=='/login' || path=='/login/'){
         await pages.login();
-    }else if(path=='/boarding'){
+    }else if(path=='/boarding' || path=='/boarding/'){
         await pages.boarding();
-    }else if(path=='/shop'){
+    }else if(path=='/shop' || path=='/shop/'){
         await pages.shop();
-    }else if(path=='/transportation'){
+    }else if(path=='/transportation' || path=='/transportation/'){
         await pages.transportation();
-    }else if(path=='/adoption'){
+    }else if(path=='/adoption' || path=='/adoption/'){
         await pages.adoption();
-    }else if(path=='/rescue'){
+    }else if(path=='/rescue' || path=='/rescue/'){
         await pages.rescue();
+    }else if(path=='/blog' || path=='/blog/'){
+        await pages.blog();
+    }else if(path=='/profile' || path=='/profile/'){
+        await pages.profile();
     }else{
         await pages.notFound();
     }
